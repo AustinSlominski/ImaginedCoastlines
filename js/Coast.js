@@ -1,7 +1,7 @@
 var routePath;
 var coastPath;
 
-tool.minDistance = 100;
+tool.minDistance = 100;	
 
 function onMouseDown(event){
     if (routePath) {
@@ -9,7 +9,6 @@ function onMouseDown(event){
     }
     
     var initY = Math.floor(Math.random()*((event.point.y-50)-(event.point.y+50))+(event.point.y+50));
-    console.log(event.point.y);
 
 	routePath = new Path({
 		strokeColor: 'black',
@@ -21,12 +20,18 @@ function onMouseDown(event){
 }
 
 function onMouseDrag(event){
-	routePath.add(event.point);
+	tool.minDistance = Math.floor(Math.random()*145); // Should be randomized with each onMouseDrag event
 
+	routePath.add(event.point);
+	var curSeg = routePath.segments.length-2;
+	console.log(curSeg);
+	console.log(routePath.curves.length);
 	//Draw a symbol for each subdivision
 	//Put numbers, 1 2 3, in sequential but random direction order
 	//Put letters, A,B,C, in sequential but random direction order (ABCBACBCAB, etc)
-
+	for(var i=0;i<3;i++){
+		routePath.curves[curSeg].divide(); // not even division. Need to think through the curSeg count
+	}
 }
 
 function onMouseUp(event){
