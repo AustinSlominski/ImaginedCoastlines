@@ -1,5 +1,6 @@
 var routePath;
 var coastPath;
+var cliffPath = new Array();
 
 tool.minDistance = 100;	
 
@@ -20,20 +21,33 @@ function onMouseDown(event){
 }
 
 function onMouseDrag(event){
-	tool.minDistance = Math.floor(Math.random()*145); // Should be randomized with each onMouseDrag event
+	tool.minDistance = Math.floor(Math.random()*145);
 
 	routePath.add(event.point);
 	var curSeg = routePath.segments.length-2;
-	console.log(curSeg);
-	console.log(routePath.curves.length);
+
+	//Even Thirds Subdivision
+		//Is there a better way to do this?	
+		routePath.curves[curSeg].divide();
+		routePath.curves[curSeg+1].divide();
+		routePath.curves[curSeg].divide();
+
+	//Cliffside Generation
+		for(var i=0;i<4;i++){
+			cliffSeg = [new Point(routePath.segments[curSeg-i].point.x,routePath.segments[curSeg-i].point.y), new Point(routePath.segments[curSeg-i].point.x, routePath.segments[curSeg-i].point.y+300)];
+			
+			tmpCliff = new Path({
+				segments: cliffSeg,	
+				strokeColor: 'black',
+				fullySelected: true
+			});
+
+			cliffPath.push(tmpCliff);
+		}
+
 	//Draw a symbol for each subdivision
 	//Put numbers, 1 2 3, in sequential but random direction order
 	//Put letters, A,B,C, in sequential but random direction order (ABCBACBCAB, etc)
-
-	//Is there a better way to do this?
-	routePath.curves[curSeg].divide();
-	routePath.curves[curSeg+1].divide();
-	routePath.curves[curSeg].divide();
 }
 
 function onMouseUp(event){
