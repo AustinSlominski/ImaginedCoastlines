@@ -29,9 +29,11 @@ function onMouseDrag(event){
 	//Draw a symbol for each subdivision
 	//Put numbers, 1 2 3, in sequential but random direction order
 	//Put letters, A,B,C, in sequential but random direction order (ABCBACBCAB, etc)
-	for(var i=0;i<3;i++){
-		routePath.curves[curSeg].divide(); // not even division. Need to think through the curSeg count
-	}
+
+	//Is there a better way to do this?
+	routePath.curves[curSeg].divide();
+	routePath.curves[curSeg+1].divide();
+	routePath.curves[curSeg].divide();
 }
 
 function onMouseUp(event){
