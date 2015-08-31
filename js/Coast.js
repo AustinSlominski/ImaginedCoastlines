@@ -20,6 +20,7 @@ function onMouseDown(event){
 	routePath.add(event.point);
 	routePath.curves[0].divide();
 	routePath.curves[1].divide();
+	routePath.curves[0].divide();
 
 	for(var i=0;i<4;i++){
 		cliffSeg = [new Point(routePath.segments[i].point.x,routePath.segments[i].point.y), new Point(routePath.segments[i].point.x, routePath.segments[i].point.y+300)];
@@ -48,7 +49,23 @@ function onMouseDrag(event){
 
 	//Cliffside Generation
 		for(var i=0;i<4;i++){
-			cliffSeg = [new Point(routePath.segments[curSeg-i].point.x,routePath.segments[curSeg-i].point.y), new Point(routePath.segments[curSeg-i].point.x, routePath.segments[curSeg-i].point.y+300)];
+
+			//Definitely a way to do this with modulation
+			//define a basic length to go off of, and everything is a modulation of that
+				if(i==0||i==4){
+					var yBaseLen = 300;
+				}else if(i==1||i==3){
+					var yBaseLen = 275;
+				}else{
+					var yBaseLen = 250;
+				}
+
+			yMod = yBaseLen;
+			xMod = 10;
+			destX = Math.random()*((routePath.segments[curSeg-i].point.x+xMod)-(routePath.segments[curSeg-i].point.x-xMod))+(routePath.segments[curSeg-i].point.x-xMod);
+			destY = routePath.segments[curSeg-i].point.y+yMod;
+
+			cliffSeg = [new Point(routePath.segments[curSeg-i].point.x,routePath.segments[curSeg-i].point.y),new Point(destX,destY)];
 			
 			tmpCliff = new Path({
 				segments: cliffSeg,	
