@@ -1,12 +1,12 @@
 var routePath;
-var coastPath;
-var cliffPath = new Array();
+var coastPath = new Group();
 
 tool.minDistance = 100;	
 
 function onMouseDown(event){
     if (routePath) {
         routePath.remove();
+        coastPath.removeChildren();
     }
     
     var initY = Math.floor(Math.random()*((event.point.y-50)-(event.point.y+50))+(event.point.y+50));
@@ -18,6 +18,20 @@ function onMouseDown(event){
 
 	routePath.add(new Point(0,initY));
 	routePath.add(event.point);
+	routePath.curves[0].divide();
+	routePath.curves[1].divide();
+
+	for(var i=0;i<4;i++){
+		cliffSeg = [new Point(routePath.segments[i].point.x,routePath.segments[i].point.y), new Point(routePath.segments[i].point.x, routePath.segments[i].point.y+300)];
+		
+		tmpCliff = new Path({
+			segments: cliffSeg,	
+			strokeColor: 'black',
+			fullySelected: true
+		});
+
+		coastPath.addChild(tmpCliff);
+	}
 }
 
 function onMouseDrag(event){
@@ -42,12 +56,8 @@ function onMouseDrag(event){
 				fullySelected: true
 			});
 
-			cliffPath.push(tmpCliff);
+			coastPath.addChild(tmpCliff);
 		}
-
-	//Draw a symbol for each subdivision
-	//Put numbers, 1 2 3, in sequential but random direction order
-	//Put letters, A,B,C, in sequential but random direction order (ABCBACBCAB, etc)
 }
 
 function onMouseUp(event){
