@@ -1,32 +1,31 @@
-var routePath;
-var cliffLines = new Group();
-var coastPath = new Path({
-	strokeColor: 'black'
-});
-
 tool.minDistance = 100;	
+var routePath, cliffLines, coastPath;
 
 function onMouseDown(event){
+
     if (routePath) {
         routePath.remove();
-        cliffLines.removeChildren();
         coastPath.remove();
+        cliffLines.remove();
     }
-    
-    var initY = Math.floor(Math.random()*((event.point.y-50)-(event.point.y+50))+(event.point.y+50));
 
-	routePath = new Path({
+	cliffLines = new Group();
+	coastPath = new Path({
 		strokeColor: 'black'
 	});
+
+	var initY = Math.floor(Math.random()*((event.point.y-50)-(event.point.y+50))+(event.point.y+50));
+
+	routePath = new Path;
+	routePath.strokeColor = 'black';
 
 	routePath.add(new Point(0,initY));
 	coastPath.add(new Point(0,view.size.height))
 	routePath.add(event.point);
 
-	//I SEEM TO BE INSERTING DOUBLES UPON THE FIRST onMouseDrag
-	//routePath.curves[0].divide();
-	//routePath.curves[1].divide();
-	//routePath.curves[0].divide();
+	routePath.curves[0].divide();
+	routePath.curves[1].divide();
+	routePath.curves[0].divide();
 
 	for(var i=0;i<4;i++){
 		cliffSeg = [new Point(routePath.segments[i].point.x,routePath.segments[i].point.y), new Point(routePath.segments[i].point.x, routePath.segments[i].point.y+300)];
@@ -46,10 +45,7 @@ function onMouseDrag(event){
 
 	routePath.add(event.point);
 	var curSeg = routePath.lastSegment.index;
-	console.log('Last Segment: ' + curSeg);
-	console.log('Number of Curves: ' + routePath.curves.length);
 	
-	//Even Thirds Subdivision
 	routePath.curves[curSeg-1].divide();
 	routePath.curves[curSeg].divide();
 	routePath.curves[curSeg-1].divide();
@@ -77,7 +73,6 @@ function onMouseDrag(event){
 		});
 
 		cliffLines.addChild(tmpCliff);
-		//the problem is that they are being added BACKWARDS
 		coastPath.add(new Point(cliffLines.lastChild.lastSegment.point.x,cliffLines.lastChild.lastSegment.point.y));
 	}
 }
