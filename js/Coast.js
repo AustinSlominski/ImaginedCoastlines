@@ -1,5 +1,5 @@
-tool.minDistance = 100;	
 var routePath, cliffLines, coastPath;
+tool.minDistance = 100;	
 
 function onMouseDown(event){
 
@@ -9,23 +9,20 @@ function onMouseDown(event){
         cliffLines.remove();
     }
 
+    var initY = Math.floor(Math.random()*((event.point.y-50)-(event.point.y+50))+(event.point.y+50));
+
 	cliffLines = new Group();
-	coastPath = new Path({
-		strokeColor: 'black'
-	});
-
-	var initY = Math.floor(Math.random()*((event.point.y-50)-(event.point.y+50))+(event.point.y+50));
-
+	coastPath = new Path;
 	routePath = new Path;
+
+	coastPath.strokeColor = 'black';
 	routePath.strokeColor = 'black';
 
-	routePath.add(new Point(0,initY));
-	coastPath.add(new Point(0,view.size.height))
-	routePath.add(event.point);
+	routePath.add(new Point(0,initY));				//Initial point
+	coastPath.add(new Point(0,view.size.height));
+	routePath.add(event.point);						//MouseDown point
 
-	routePath.curves[0].divide();
-	routePath.curves[1].divide();
-	routePath.curves[0].divide();
+	divideRoute(0);
 
 	for(var i=0;i<4;i++){
 		cliffSeg = [new Point(routePath.segments[i].point.x,routePath.segments[i].point.y), new Point(routePath.segments[i].point.x, routePath.segments[i].point.y+300)];
@@ -44,11 +41,9 @@ function onMouseDrag(event){
 	tool.minDistance = Math.floor(Math.random()*145);
 
 	routePath.add(event.point);
-	var curSeg = routePath.lastSegment.index;
+	curSeg = routePath.lastSegment.index-1;
 	
-	routePath.curves[curSeg-1].divide();
-	routePath.curves[curSeg].divide();
-	routePath.curves[curSeg-1].divide();
+	divideRoute(curSeg);
 
 	for(var i=4;i>0;i--){
 		
@@ -82,11 +77,15 @@ function onMouseUp(event){
 	var finalSeg = routePath.lastSegment.index;
 
 	routePath.add(new Point(view.size.width,finalY));
-	routePath.curves[finalSeg].divide();
-	routePath.curves[finalSeg+1].divide();
-	routePath.curves[finalSeg].divide();
+	divideRoute(finalSeg);
 	
 	coastPath.add(new Point(view.size.width,view.size.width));
 	coastPath.closed = true;
 	coastPath.fillColor = 'black';
+}
+
+function divideRoute(segment){
+	routePath.curves[segment].divide();
+	routePath.curves[segment+1].divide();
+	routePath.curves[segment].divide();	
 }
