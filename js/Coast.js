@@ -1,7 +1,10 @@
 var routePath, cliffLines, coastPath, routeSub;
-tool.minDistance = 100;	
+
+//Range of random interval between mouseDrag events
+	var toolRand = 145;
 
 function onMouseDown(event){
+	tool.minDistance = Math.floor(Math.random()*toolRand);
 
     if (routePath) {
         routePath.remove();
@@ -18,16 +21,15 @@ function onMouseDown(event){
 	coastPath.strokeColor = 'black';
 	routePath.strokeColor = 'black';
 
-	routePath.add(new Point(0,initY));				//Initial point
+	routePath.add(new Point(0,initY));			
 	coastPath.add(new Point(0,view.size.height));
-	routePath.add(event.point);						//MouseDown point
+	routePath.add(event.point);				
 
 	divideRoute(0);
-	genClifflines();
 }
 
 function onMouseDrag(event){
-	tool.minDistance = Math.floor(Math.random()*145);
+	tool.minDistance = Math.floor(Math.random()*toolRand);
 
 	routePath.add(event.point);
 	curSeg = routePath.lastSegment.index-1;
@@ -51,11 +53,24 @@ function onMouseUp(event){
 /*
 	* divideRoute(segment)
 	* 	routePath subdivision
+	*		TODO:
+	*			Factor in routeSub in some way. 
+	*			It should clean up the way that 
+	*			I'm handling subdivision
 	*
 */
 function divideRoute(segment){
+
+	//
+		/*
+			sub=0. then seg=0
+			sub=1, then seg=0,2
+			sub=2, then seg=0,2,4
+			sub=3, then seg=0,2,4,8
+		*/
+	//
 	routePath.curves[segment].divide();
-	routePath.curves[segment+1].divide();
+	routePath.curves[segment+1].divide(); 
 	routePath.curves[segment].divide();	
 }
 
@@ -65,21 +80,6 @@ function divideRoute(segment){
 	*
 */
 function genClifflines(){
-
-	//Originally included in mouseDown
-	/*
-	for(var i=0;i<4;i++){
-		cliffSeg = [new Point(routePath.segments[i].point.x,routePath.segments[i].point.y), new Point(routePath.segments[i].point.x, routePath.segments[i].point.y+300)];
-		
-		tmpCliff = new Path({
-			segments: cliffSeg,	
-			strokeColor: 'black'
-		});
-
-		cliffLines.addChild(tmpCliff);
-		coastPath.add(new Point(tmpCliff.lastSegment.point.x,tmpCliff.lastSegment.point.y));
-	}
-	*/
 	routeSub = 4;
 
 	for(var i=routeSub;i>0;i--){
