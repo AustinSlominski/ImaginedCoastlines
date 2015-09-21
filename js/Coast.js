@@ -1,5 +1,5 @@
 var routePath, cliffLines, coastPath, routeSub;
-
+routeSub = 4;
 //Range of random interval between mouseDrag events
 	var toolRand = 145;
 
@@ -20,6 +20,7 @@ function onMouseDown(event){
 
 	coastPath.strokeColor = 'black';
 	routePath.strokeColor = 'black';
+	routePath.fullySelected = 'true';
 
 	routePath.add(new Point(0,initY));			
 	coastPath.add(new Point(0,view.size.height));
@@ -69,9 +70,21 @@ function divideRoute(segment){
 			sub=3, then seg=0,2,4,8
 		*/
 	//
+
+	for(var i=0;i<2;i++){
+		routePath.curves[segment].divide();
+		for(var j=0;j<i;j++){
+			console.log(Math.pow(2,j));
+			routePath.curves[segment+Math.pow(2,j)].divide();
+		}
+		
+	}
+
+	/*
 	routePath.curves[segment].divide();
 	routePath.curves[segment+1].divide(); 
 	routePath.curves[segment].divide();	
+	*/
 }
 
 /*
@@ -80,8 +93,6 @@ function divideRoute(segment){
 	*
 */
 function genClifflines(){
-	routeSub = 4;
-
 	for(var i=routeSub;i>0;i--){
 		
 		if(i==0||i==4){
@@ -107,4 +118,8 @@ function genClifflines(){
 		cliffLines.addChild(tmpCliff);
 		coastPath.add(new Point(cliffLines.lastChild.lastSegment.point.x,cliffLines.lastChild.lastSegment.point.y));
 	}
+}
+
+function genRouteText(){
+
 }
